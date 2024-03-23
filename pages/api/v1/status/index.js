@@ -7,8 +7,8 @@ async function status(request, response) {
   const updatedAt = new Date().toISOString();
 
   // Versao do postgres
-  const resultVersion = await database.query('SELECT version() as VERSION;');
-  const { version } = resultVersion.rows[0] || { version: '' };
+  const resultVersion = await database.query('SHOW server_version;');
+  const { server_version } = resultVersion.rows[0] || { server_version: '' };
 
   // Conexões máximas
   const resultMaxConnections = await database.query('SHOW max_connections;');
@@ -20,11 +20,13 @@ async function status(request, response) {
 
   response.status(200).json({
     updated_at: updatedAt,
-    database: {
-      version,
-      max_connections,
-      used_connections
-    }
+    dependencies: {
+      database: {
+        version: server_version,
+        max_connections,
+        used_connections
+      }
+    },
   });
 }
 
