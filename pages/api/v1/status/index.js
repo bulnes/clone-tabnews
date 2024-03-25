@@ -1,9 +1,6 @@
 import database from 'infra/database';
 
 async function status(request, response) {
-  // const result = await database.query('SELECT 1 + 1 as SUM;');
-  // console.log(result.rows);
-
   const updatedAt = new Date().toISOString();
 
   // Versao do postgres
@@ -15,8 +12,8 @@ async function status(request, response) {
   const { max_connections } = resultMaxConnections.rows[0] || { max_connections: 0 }
 
   // Conexões usadas
-  const resultUsedConnections = await database.query("SELECT COUNT(*) AS USED_CONNECTIONS FROM pg_stat_activity WHERE state = 'active';");
-  const { used_connections } = resultUsedConnections.rows[0] || { used_connections: 0 }
+  const resultUsedConnections = await database.query("SELECT count(*)::int FROM pg_stat_activity WHERE datname = 'local_postgres';");
+  const opened_connections = resultUsedConnections.rows[0].count;
 
   response.status(200).json({
     updated_at: updatedAt,
@@ -24,7 +21,7 @@ async function status(request, response) {
       database: {
         version: server_version,
         max_connections: parseInt(max_connections),
-        used_connections
+        opened_connections
       }
     },
   });

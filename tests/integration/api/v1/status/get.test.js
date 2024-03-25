@@ -10,5 +10,5 @@ test("GET `/api/v1/status`should return status 200", async () => {
 
   expect(responseBody.dependencies.database.version).toEqual("16.0")
   expect(responseBody.dependencies.database.max_connections).toEqual(100);
-  expect(responseBody.dependencies.database.used_connections).toBeDefined();
+  expect(responseBody.dependencies.database.opened_connections).toEqual(1);
 });
