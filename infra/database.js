@@ -9,9 +9,8 @@ async function query(querySQL) {
         database: process.env.POSTGRES_DB
     });
     
-    await client.connect();
-    
     try {
+      await client.connect();
       const result = await client.query(querySQL);
       return result;
     } catch(error) {
